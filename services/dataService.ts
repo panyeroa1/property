@@ -195,12 +195,18 @@ export async function setActiveDialerAgent(agentId: string): Promise<void> {
     const agents = await idbService.getAgentsFromIdb();
     const updatedAgents = agents.map(a => ({ ...a, isActiveForDialer: a.id === agentId }));
     await idbService.upsertAgentsToIdb(updatedAgents);
+    
+    // Dispatch event for immediate UI update in Dialer
+    window.dispatchEvent(new Event('eburon-active-agent-changed'));
 }
 
 export async function deactivateActiveDialerAgent(): Promise<void> {
     const agents = await idbService.getAgentsFromIdb();
     const updatedAgents = agents.map(a => ({ ...a, isActiveForDialer: false }));
     await idbService.upsertAgentsToIdb(updatedAgents);
+    
+    // Dispatch event for immediate UI update in Dialer
+    window.dispatchEvent(new Event('eburon-active-agent-changed'));
 }
 
 export async function upsertAgents(agents: Agent[]): Promise<void> {
