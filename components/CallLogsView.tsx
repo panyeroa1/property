@@ -285,16 +285,18 @@ const CallLogsView: React.FC = () => {
     }, [loadLogs]);
 
     const filteredLogs = useMemo(() => {
-        // Filter only for Turkish numbers (+90)
-        const turkishLogs = callLogs.filter(log => 
-            (log.to && (log.to.startsWith('+90') || log.to.startsWith('90'))) || 
-            (log.from && (log.from.startsWith('+90') || log.from.startsWith('90')))
-        );
+        // Filter logs starting from November 28, 2025
+        const startDate = new Date('2025-11-28T00:00:00');
+        
+        const dateFilteredLogs = callLogs.filter(log => {
+            const logDate = new Date(log.created_at);
+            return logDate >= startDate;
+        });
 
-        if (!searchTerm) return turkishLogs;
+        if (!searchTerm) return dateFilteredLogs;
         
         const lowercasedFilter = searchTerm.toLowerCase();
-        return turkishLogs.filter(log => 
+        return dateFilteredLogs.filter(log => 
             log.from.includes(lowercasedFilter) || 
             log.to.includes(lowercasedFilter) ||
             log.concatenated_transcript.toLowerCase().includes(lowercasedFilter)
